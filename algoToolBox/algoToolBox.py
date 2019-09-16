@@ -22,8 +22,8 @@ def splitlist(L):
 # This can be simplified with *Python list slices*:
 # - `L[a:b]` is the sub list of `L` with elements from positions `a` to `b` (`b` excluded)
 # - `L[:a]` is the list `L[0:a]`
-# - `L[a:]` is the list `L[b:len(n)]`
-# - `L[-1]` is `L[len(L)]`
+# - `L[a:]` is the list `L[a:len(n)]`
+# - `L[-1]` is `L[len(L)-1]`
 
 # In[ ]:
 
@@ -140,13 +140,13 @@ def buildlist(nb, val=None, alea=None):
 
 # In[ ]:
 
-def buildList(nb, val=None, alea=None):
+def buildlist(nb, val=None, alea=None):
     #FIXME
     pass
 
 # In[ ]:
 
-buildlist(5), buildList(5, 0), buildList(5, alea=(0,10))
+buildlist(5), buildlist(5, 0), buildlist(5, alea=(0,10))
 
 
 # #### <font color="red">WARNING:</font>
@@ -154,7 +154,7 @@ buildlist(5), buildList(5, 0), buildList(5, alea=(0,10))
 
 # In[ ]:
 
-L = buildList(9, [])
+L = buildlist(9, [])
 
 
 # In[ ]:
