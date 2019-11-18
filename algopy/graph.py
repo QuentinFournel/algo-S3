@@ -4,8 +4,7 @@
 Provide an implementation of graphs with adjacency lists.
 
 In a graph, vertices are considered numbered from 0 to the order of the graph
-minus one. The vertex key can then be used to access its
-adjacency list.
+minus one. The vertex number can then be used to access its adjacency list.
 
 """
 
@@ -93,8 +92,8 @@ class Graph:
             self.adjlists[src].remove(dst)
             if not self.directed and dst != src:
                 self.adjlists[dst].remove(src)
-
-
+                
+                    
 def todot(G):
     """Dot format of graph.
 
@@ -106,8 +105,24 @@ def todot(G):
 
     """
 
-    #FIXME
-    pass
+    if G.directed:
+        link = " -> "
+        dot = "digraph {\n"
+    else:
+        link = " -- "
+        dot = "graph {\n"
+        
+    for s in range(G.order):
+        if G.labels:
+            dot += "  " + str(s) + ' [label = "' + G.labels[s] + '"]\n'
+        else:
+            dot += "  " + str(s) + '\n'
+        for adj in G.adjlists[s]:
+            if G.directed or adj <= s:
+                dot += str(s) + link + str(adj) + "\n"
+
+    dot += "}"
+    return dot
 
 
 def display(G, eng=None):
@@ -122,7 +137,7 @@ def display(G, eng=None):
         from IPython.display import display
     except:
         raise Exception("Missing module: graphviz and/or IPython.")
-    display(Source(todot(G), engine = eng))
+    display(Source(todot(G), engine=eng))
 
 
 # load / save gra format    
@@ -141,10 +156,49 @@ def loadgra(filename):
 
     """
 
-    #FIXME
-    pass
+    f = open(filename)
+    lines = f.readlines()
+    f.close()
+    
+    infos = {}
+    i = 0
+    while '#' in lines[i]:
+        (key, val) = lines[i][1:].strip().split(": ")
+        infos[key] = val
+        i += 1
+
+    directed = bool(int(lines[i]))
+    order = int(lines[i+1])
+
+    if infos and "labels" in infos:
+        labels = infos["labels"].split(',') #labels is a list of str
+        G = Graph(order, directed, labels)  # a graph with labels
+    else:
+        G = Graph(order, directed)  # a graph without labels
+    if infos:
+        G.infos = infos
+        
+    for line in lines[i+2:]:
+        edge = line.strip().split(' ')
+        (src, dst) = (int(edge[0]), int(edge[1]))
+        G.addedge(src, dst)
+    return G
 
 
 def savegra(G, fileOut):
-    #FIXME
-    pass
+    gra = ""
+    if G.labels:
+        lab = "#labels: "
+        for i in range(G.order - 1):
+            lab += G.labels[i] + ','
+        lab += G.labels[-1]
+        gra += lab + '\n'
+    gra += str(int(G.directed)) + '\n'
+    gra += str(G.order) + '\n'
+    for s in range(G.order):
+        for adj in G.adjlists[s]:
+            if G.directed or s >= adj:
+                gra += str(s) + " " + str(adj) + '\n'
+    fout = open(fileOut, mode='w')
+    fout.write(gra)
+    fout.close()
