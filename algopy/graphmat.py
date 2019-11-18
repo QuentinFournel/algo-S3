@@ -65,15 +65,29 @@ def todot(G):
 
     """
 
-    #FIXME
-    pass
+    if G.directed:
+        link = " -> "
+        dot = "digraph {\n"
+    else:
+        link = " -- "
+        dot = "graph {\n"
+    
+    k = G.order
+    for s in range(G.order):
+        if not G.directed:
+            k = s+1
+        for adj in range(k):
+            for _ in range(G.adj[s][adj]):
+                dot += str(s) + link + str(adj) + "\n"
+    dot += "}"
+    return dot
 
 
 def display(G, eng=None):
     """
     *Warning:* Made for use within IPython/Jupyter only.
     eng: graphivz.Source "engine" optional argument (try "neato", "fdp", "sfdp", "circo")
-    
+
     """
     
     try:
@@ -81,12 +95,12 @@ def display(G, eng=None):
         from IPython.display import display
     except:
         raise Exception("Missing module: graphviz and/or IPython.")
-    display(Source(todot(G), engine = eng))
+    display(Source(todot(G), engine=eng))
     
 
 # load / save gra format    
 
-def loadgra(filename):
+def loadgra(filename,):
     """Build a new graph from a GRA file.
 
     Args:
@@ -100,9 +114,28 @@ def loadgra(filename):
 
     """
 
-    #FIXME
-    pass
+    f = open(filename)
+    directed = bool(int(f.readline()))
+    order = int(f.readline())
+    g = GraphMat(order, directed)
+    for line in f.readlines():
+        edge = line.strip().split(' ')
+        (src, dst) = (int(edge[0]), int(edge[1]))
+        g.addedge(src, dst)
+    f.close()
+    return g
 
 def savegra(G, fileOut):
-    #FIXME
-    pass
+    gra = str(int(G.directed)) + '\n'
+    gra += str(G.order) + '\n'
+    for s in range(G.order):
+        if G.directed:
+            n = G.order
+        else:
+            n = s
+        for adj in range(n):    
+            for i in range(G.adj[s][adj]):
+                gra += str(s) + " " + str(adj) + '\n'
+    fout = open(fileOut, mode='w')
+    fout.write(gra)
+    fout.close()
