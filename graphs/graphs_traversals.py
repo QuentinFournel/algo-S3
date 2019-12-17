@@ -151,7 +151,7 @@ def __dfs_digraph(G, x, pref, suff, cpt):
     return cpt
 
 # reminder: int values are "unmutable" => cpt cannot be passed by reference
-# that why the functions return cpt!
+# that why the function returns cpt!
 
 def dfs_digraph(G):
     pref = [None] * G.order
